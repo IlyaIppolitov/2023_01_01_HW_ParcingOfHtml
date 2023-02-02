@@ -1,0 +1,14 @@
+﻿<Window x:Class="HW_ParcingOfHtml.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HW_ParcingOfHtml"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="499" Width="540">
+    <Grid>
+        <Button x:Name="buttonGetVac" Content="Button" HorizontalAlignment="Center" Margin="0,66,0,0" VerticalAlignment="Top" Width="289" Click="buttonGetVac_Click"/>
+        <ListBox x:Name="listBoxOfVac" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,107,0,0" Height="274" Width="289"/>
+
+    </Grid>
+</Window>
