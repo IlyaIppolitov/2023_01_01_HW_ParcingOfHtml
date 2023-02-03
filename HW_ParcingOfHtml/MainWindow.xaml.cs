@@ -31,14 +31,21 @@ namespace HW_ParcingOfHtml
 
         private async void buttonGetVac_Click(object sender, RoutedEventArgs e)
         {
+            // Очистка существующего списка
             listBoxOfVac.Items.Clear();
 
-            // Массив из цифр с количеством страниц
-            var pages = Enumerable.Range(0, 17).ToArray();
+            // Главная страница
+            var uriMainPage = "https://proglib.io/vacancies/all";
+
+            // Определение количества страниц
+            int numberOfPages = await getNumberOfPages(uriMainPage);
+
+            // Инициализация массива с необходимым количеством элементов
+            var arrOfPages = Enumerable.Range(0, numberOfPages).ToArray();
 
             // ConcurrentBag использовал для проерки
-            // Результаты совпали, поэьтом закоментировал
-            //var bag = new ConcurrentBag<string>();
+            // Результаты совпали, поэтому закоментировал
+            // var bag = new ConcurrentBag<string>();
 
             // Общая часть названия страницы
             var uri = "https://proglib.io/vacancies/all?workType=all&workPlace=all&experience=&salaryFrom=&page=";
@@ -49,11 +56,11 @@ namespace HW_ParcingOfHtml
                 MaxDegreeOfParallelism = 5
             };
 
-            // Считывание необходимых данных с сайта параллельно
-            await Parallel.ForEachAsync(pages, parallelOptions, async (i, token) =>
+            //Считывание необходимых данных с сайта параллельно
+            await Parallel.ForEachAsync(arrOfPages, parallelOptions, async (i, token) =>
             {
                 using var client = new HttpClient();
-                string response = await client.GetStringAsync(uri + (i+1).ToString());
+                string response = await client.GetStringAsync(uri + (i + 1).ToString());
 
                 string pattern = @"<div itemprop=""description"">(.+?)</div>";
                 Regex regex = new Regex(pattern);
@@ -69,6 +76,22 @@ namespace HW_ParcingOfHtml
             //{
             //    listBoxOfVac.Items.Add(s);
             //}
+        }
+
+        async Task<int> getNumberOfPages (string mainPage)
+        {
+            int numberOfPages;
+
+            using var client = new HttpClient();
+            {
+                string response = await client.GetStringAsync(mainPage);
+
+                string patternPageCount = @"data-current=""(.+)"" data-total=""(.+?)"">";
+                Regex regex = new Regex(patternPageCount);
+                MatchCollection matches = regex.Matches(response);
+                numberOfPages = int.Parse(matches.ElementAt(0).Groups[2].Value);
+            }
+            return numberOfPages;
         }
     }
 }
